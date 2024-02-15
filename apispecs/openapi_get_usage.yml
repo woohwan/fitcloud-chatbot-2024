@@ -3,10 +3,10 @@ info:
   title: fitCloud
   version: "1.0"
 servers:
-  - url: https://aws-dev.fitcloud.co.kr/
+  - url: https://aws-dev.fitcloud.co.kr
 paths:
   /get_usage:
-    post:
+    get:
       summary: calculate aws resource usage per account in us dollar.
       description: calculate resource usage per account. The period could be one month, or it could be several months. Usage is expressed in dollars.
       operationId: get_usage
@@ -28,10 +28,26 @@ paths:
         - name: accountId
           in: query
           description: aws account id that utilizes resources
+          required: true
           schema:
             type: string
             example: "537505286865"
+        - name: token
+        in: query
+        description: JSESSIONID
+        required: true
+        schema:
+          type: string
+          example: "5375052ZF86865AK"
 
       responses:
         "200":
-          description: OK
+          description: Successful response containing the resource usage information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_sum:
+                    type: string
+                    description: aws resource usage amount in specific period in us dollar
