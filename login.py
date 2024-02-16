@@ -5,11 +5,14 @@ import requests
 fitcloud_url = "https://aws-dev.fitcloud.co.kr"
 
 st.session_state.fitcloud_url = "https://aws-dev.fitcloud.co.kr"
-st.session_state.session_id = ""
+st.session_state.toekn = ""
+# hard code: 향후 API를 작성해 달라고 요청. 현재는 없음.
+st.session_state.accountId = "532805286864"
 
 # saltware code
 st.session_state.corpId = "KDjAqAG0TnEAAAFK5eqDUL0A"
 
+# sidebar 숨김
 st.set_page_config(initial_sidebar_state="collapsed")
 st.markdown(
     """
@@ -61,8 +64,8 @@ def main():
         if success:
             # Add the rest of your Streamlit app code here after successful login
 
-            # save session id
-            st.session_state.session_id = session_id
+            # session state에 session_id 저장 ( token)
+            st.session_state.token = session_id
             # Clear current content
             st.empty()
 
