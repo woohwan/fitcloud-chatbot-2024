@@ -20,8 +20,8 @@ br_agnet_client = session.client(
 )
 
 # Agent Info
-agentId = "MARTXEGJPP"
-agentAliasId='UUHTRMUTE6'
+agentId = "IUFLFZG1TW"
+agentAliasId='GDOGYNUEF9'
 sessionId  = "fitcloud"
 
 st.set_page_config(initial_sidebar_state="collapsed")
@@ -77,8 +77,8 @@ if prompt := st.chat_input("What is up"):
         for event in resp.get('completion'):
             # print(event)
             chunk = event['chunk']
-            print(chunk)
+            # print(chunk)
             completion = completion + chunk['bytes'].decode()
+            print(completion)
         
-
     st.session_state.messages.append({"role": "assistant", "content": completion})
