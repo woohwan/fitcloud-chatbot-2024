@@ -1,7 +1,6 @@
-import streamlit as st
+import json
 import requests
 import pandas as pd
-from langchain.agents import tool
 
 fitcloud_url = "https://aws-dev.fitcloud.co.kr"
 corpId = "KDjAqAG0TnEAAAFK5eqDUL0A"
@@ -80,20 +79,16 @@ def ondemand_account_day(
 
   else:
     print("error")
-#----------------------------------------------------------
-def corp_month_internal(start_month: str, end_month:str, accountId: str, token: str):
-  """account가 사용한 AWS Resource Usage를 return 
-
-  Args:
-    Usage: account, period, token정보가 담겨 있음
-
-  Returns:
-      _type_: (str)
-  """
+    
+def corp_month_internal(start_month: str, end_month: str, accountId: str, token: str):
+  print(start_month, end_month, accountId, token)
   json_data = corp_month(start_month, end_month, token)
+  print('json_data: ', json_data)
   df = pd.DataFrame(json_data)
+  # accountId = accountId
   # account에 관련된 데이터 추출
-  df = df.query("accountId==@usage.accountId")
+  # df = df.query("accountId==@accountId")
+  df = df[df['accountId'] == accountId]
   # 기간 내 월 리스트 추출
   month_list = month_range(start_month, end_month)
   # 월 column의 data type을 numeric으로 변환
@@ -103,6 +98,45 @@ def corp_month_internal(start_month: str, end_month:str, accountId: str, token: 
   internal_filter = ['Usage','ApplySavingsPlanCompute', 'ApplyRI' ]
   # internal_filter = ['Usage','ApplySavingsPlanCompute']
   df_int = df_acc.query("type in @internal_filter")
-  # print(df_int)
-  sum = df_int[month_list].sum().sum()
+  sum = round(df_int[month_list].sum().sum(), 2
   return sum
+  
+
+def lambda_handler(event, context):
+    # TODO implement
+    print(event)
+    sessionAttributes = event.get('sessionAttributes')
+    accountId = sessionAttributes.get('accountId')
+    token = sessionAttributes.get('token')
+    params = event.get('parameters')
+    param_dict= {}
+    for data in params:
+      param_dict[data['name']] = data['value']
+    
+    start_month = param_dict['start_month']
+    end_month = param_dict['end_month']
+    
+    sum = corp_month_internal(start_month, end_month, accountId, token)
+    # sum = corp_month_internal(**param_dict)
+    
+    response_json = {"total_sum": sum }
+    response_body = {"application/json": {"body": json.dumps(response_json)}}
+    
+    action_response = {
+        "actionGroup": event["actionGroup"],
+        "apiPath": event["apiPath"],
+        "httpMethod": event["httpMethod"],
+        "parameters": event["parameters"],
+        "httpStatusCode": 200,
+        "responseBody": response_body,
+    }
+
+    session_attributes = event["sessionAttributes"]
+    prompt_session_attributes = event["promptSessionAttributes"]
+
+    return {
+        "messageVersion": "1.0",
+        "response": action_response,
+        "sessionAttributes": session_attributes,
+        "promptSessionAttributes": prompt_session_attributes,
+    }

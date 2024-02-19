@@ -25,20 +25,6 @@ paths:
           schema:
             type: string
             example: "202309"
-        - name: accountId
-          in: query
-          description: aws account id that utilizes resources
-          required: true
-          schema:
-            type: string
-            example: "537505286865"
-        - name: token
-        in: query
-        description: JSESSIONID
-        required: true
-        schema:
-          type: string
-          example: "5375052ZF86865AK"
 
       responses:
         "200":
