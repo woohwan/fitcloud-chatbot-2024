@@ -51,7 +51,7 @@ for message in st.session_state.messages:
 
 completion = ""
 # React to user input
-if prompt := st.chat_input("What is up"):
+if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입력해 주세요"):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container
@@ -79,6 +79,6 @@ if prompt := st.chat_input("What is up"):
             chunk = event['chunk']
             # print(chunk)
             completion = completion + chunk['bytes'].decode()
-            print(completion)
+        print(completion)
         
     st.session_state.messages.append({"role": "assistant", "content": completion})
