@@ -36,7 +36,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("FitCloud Chatbot Test")
+st.title("FitCloud Chatbot")
 accountId = fitInfo.accountId
 token = fitInfo.token
 
@@ -49,7 +49,6 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-completion = ""
 # React to user input
 if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입력해 주세요"):
     # Add user message to chat history
@@ -59,7 +58,10 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
         st.markdown(prompt)
     
     with st.chat_message("assistant"):
-
+        
+        message_placeholder = st.empty()
+        completion = ""
+        
         resp = br_agnet_client.invoke_agent(
             sessionState = {
                 'sessionAttributes': {
@@ -70,7 +72,9 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
             agentId=agentId,
             agentAliasId=agentAliasId,
             sessionId=sessionId, 
-            inputText=prompt  )
+            inputText=prompt
+        )
+        
         print("prompt: ", prompt)
         print("resp: ", resp)
         
@@ -80,5 +84,6 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
             # print(chunk)
             completion = completion + chunk['bytes'].decode()
         print(completion)
+        message_placeholder.markdown(completion)
         
     st.session_state.messages.append({"role": "assistant", "content": completion})
