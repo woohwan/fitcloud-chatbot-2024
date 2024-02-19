@@ -1,13 +1,17 @@
 import streamlit as st
 import requests
+from tools import FitInfo
+
 
 # Dev FitCloud URL for authentication
 fitcloud_url = "https://aws-dev.fitcloud.co.kr"
 
 st.session_state.fitcloud_url = "https://aws-dev.fitcloud.co.kr"
-st.session_state.toekn = ""
 # hard code: 향후 API를 작성해 달라고 요청. 현재는 없음.
-st.session_state.accountId = "532805286864"
+accountId = "532805286864"
+
+# 세션 정보 초기화.
+fitInfo = FitInfo(accountId=accountId, token="")
 
 # saltware code
 st.session_state.corpId = "KDjAqAG0TnEAAAFK5eqDUL0A"
@@ -65,7 +69,12 @@ def main():
             # Add the rest of your Streamlit app code here after successful login
 
             # session state에 session_id 저장 ( token)
-            st.session_state.token = session_id
+            fitInfo.token = session_id
+
+            # convert to json format and save to file.
+            fitInfo_json = fitInfo.model_dump_json()
+            with open('fitInfo.json', 'w') as f:
+                f.write(fitInfo_json)
             # Clear current content
             st.empty()
 
