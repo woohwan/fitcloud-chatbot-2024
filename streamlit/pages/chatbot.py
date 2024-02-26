@@ -1,6 +1,7 @@
 import streamlit as st
 from pydantic import BaseModel
 import sys
+import time
 sys.path.append("..")
 
 from tools import FitInfo
@@ -62,6 +63,7 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
         message_placeholder = st.empty()
         completion = ""
         
+        start_time = time.time()
         resp = br_agnet_client.invoke_agent(
             sessionState = {
                 'sessionAttributes': {
@@ -76,13 +78,17 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
         )
         
         print("prompt: ", prompt)
-        print("resp: ", resp)
+        # print("resp: ", resp)
         
         for event in resp.get('completion'):
             # print(event)
             chunk = event['chunk']
             # print(chunk)
             completion = completion + chunk['bytes'].decode()
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Execution time: {execution_time} seconds")
         print(completion)
         message_placeholder.markdown(completion)
         
