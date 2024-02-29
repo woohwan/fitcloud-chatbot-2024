@@ -2,6 +2,7 @@ import streamlit as st
 from pydantic import BaseModel
 import sys
 import time
+from datetime import datetime
 sys.path.append("..")
 
 from tools import FitInfo
@@ -23,7 +24,7 @@ br_agnet_client = session.client(
 # Agent Info
 agentId = "IUFLFZG1TW"
 agentAliasId='GDOGYNUEF9'
-sessionId  = "fitcloud"
+sessionId  = "fitcloud-02"
 
 # st.set_page_config(initial_sidebar_state="collapsed")
 # st.markdown(
@@ -77,7 +78,7 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
             inputText=prompt
         )
         
-        print("prompt: ", prompt)
+        print("prompt: ", prompt + f"현재 연도와 날짜는 <data></data> 사이에 있는 값을 사용하세요. 오늘은 <data> {datetime.now().date()} </date> 입니다.")
         # print("resp: ", resp)
         
         for event in resp.get('completion'):
