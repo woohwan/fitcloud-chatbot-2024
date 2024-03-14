@@ -2,7 +2,9 @@ import streamlit as st
 from pydantic import BaseModel
 import sys
 import time
-from datetime import datetime
+import datetime
+import os
+
 sys.path.append("..")
 
 from tools import FitInfo
@@ -53,6 +55,12 @@ for message in st.session_state.messages:
 
 # React to user input
 if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입력해 주세요"):
+
+    year = datetime.date.today().year
+    month = datetime.date.today().month
+    day = datetime.date.today().day
+
+    
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container
@@ -65,6 +73,23 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
         completion = ""
         
         start_time = time.time()
+
+        # prompt = f"""Today's date information looks like this
+        # <year>{year}</year> 
+        # <month>{month}</month> 
+        # <day>{day}</day>
+        # If the start_month and end_month information is not available, use the following rules to generate it
+        # 1. use the information between <year></year> as the year.
+        # 2. convert the inferred month using the <emxample></example> information below.
+        # <example>
+        # January: 01
+        # Feburary: 02
+        # November: 11
+        # December: 12
+        # </example>.
+        # 3. Create start_month and end_month as the sum of the year and month from 1 and 2 in the form '%Y%m'.
+        # That is, if the year is 2024 and the month is 01, the start_month and end_month will be '202401'.""" + prompt
+        
         resp = br_agnet_client.invoke_agent(
             sessionState = {
                 'sessionAttributes': {
@@ -77,8 +102,7 @@ if prompt := st.chat_input("2023년 9월 자원 사용량은? 형식으로 입�
             sessionId=sessionId, 
             inputText=prompt
         )
-        
-        print("prompt: ", prompt + f"현재 연도와 날짜는 <data></data> 사이에 있는 값을 사용하세요. 오늘은 <data> {datetime.now().date()} </date> 입니다.")
+
         # print("resp: ", resp)
         
         for event in resp.get('completion'):
