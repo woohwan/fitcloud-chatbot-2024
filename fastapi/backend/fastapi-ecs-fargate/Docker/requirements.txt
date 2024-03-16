@@ -44,4 +44,7 @@ tqdm==4.66.1
 typing_extensions==4.8.0
 urllib3==1.26.18
 wikipedia==1.4.0
-yarl==1.9.2
+yarl==1.9.4
+# added 24.04.16
+fastapi==0.110.0
+uvicorn[standard]==0.28.0
