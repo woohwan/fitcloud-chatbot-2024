@@ -1,6 +1,10 @@
 import json
 import requests
 import pandas as pd
+import datetime
+
+
+## fitcloud API 관련 정보
 
 fitcloud_url = "https://aws-dev.fitcloud.co.kr"
 corpId = "KDjAqAG0TnEAAAFK5eqDUL0A"
@@ -102,3 +106,20 @@ class UsageOfAmount(BaseTool):
     df_int = df_acc.query("type in @internal_filter")
     sum = df_int[month_list].sum().sum()
     return round(sum, 2)
+
+# ------------------------------------------------------------------------------------------
+
+# Tools Infos
+tool_name = "get_amount_of_usage"
+tool_description = "calculate resource usage per account. The period could be one month, or it could be several months. Usage is expressed in dollars."
+tool_parameters = [
+  {"name": "start_month", "type": "str", "description": "the starting month in period to calulate usage amount"},
+  {"name": "end_month", "type": "str", "description": "the end month in period to calulate usage amount"},
+  {"name": "accountId", "type": "str", "description": "account number"},
+  {"name": "token", "type": "str", "description": "account number"},
+]
+
+usage_of_amount_tool = UsageOfAmount(tool_name, tool_description, tool_parameters)
+
+from tool_use_package.tool_user import ToolUser
+time_tool_user = ToolUser([usage_of_amount_tool], first_party=False, model="anthropic.claude-v2:1")
