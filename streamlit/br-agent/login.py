@@ -10,24 +10,29 @@ st.session_state.fitcloud_url = "https://aws-dev.fitcloud.co.kr"
 # hard code: 향후 API를 작성해 달라고 요청. 현재는 없음.
 accountId = "532805286864"
 
-# 세션 정보 초기화.
-fitInfo = FitInfo(accountId=accountId, token="")
+
 
 # saltware code
 st.session_state.corpId = "KDjAqAG0TnEAAAFK5eqDUL0A"
+# 세션 정보 초기화.
+if 'accountId' not in st.session_state:
+    st.session_state['accountId'] = "532805286864"
 
-# sidebar 숨김
-st.set_page_config(initial_sidebar_state="collapsed")
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+if 'token' not in st.session_state:
+    st.session_state['token'] = ""
+
+# # sidebar 숨김
+# st.set_page_config(initial_sidebar_state="collapsed")
+# st.markdown(
+#     """
+# <style>
+#     [data-testid="collapsedControl"] {
+#         display: none
+#     }
+# </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 
 
 def authenticate(username, password, mfa_code):
@@ -69,12 +74,7 @@ def main():
             # Add the rest of your Streamlit app code here after successful login
 
             # session state에 session_id 저장 ( token)
-            fitInfo.token = session_id
-
-            # convert to json format and save to file.
-            fitInfo_json = fitInfo.model_dump_json()
-            with open('fitInfo.json', 'w') as f:
-                f.write(fitInfo_json)
+            st.session_state['token'] = session_id
             # Clear current content
             st.empty()
 
